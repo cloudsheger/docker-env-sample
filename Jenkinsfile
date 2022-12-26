@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'CloudSheger' }
+    agent any
 
     environment {
     //registry = "YourDockerhubAccount/YourRepository"
@@ -9,49 +9,40 @@ pipeline {
     REGISTRY_CREDENTIAL = 'DockerID'
     dockerImage = ''
     }
-    triggers { pollSCM('') }
 
     options {
-        buildDiscarder(logRotator(
-                numToKeepStr: '10',
-                daysToKeepStr: '30',
-                artifactDaysToKeepStr: '30',
-                artifactNumToKeepStr: '3'
-            )
-        )
-        disableConcurrentBuilds()
-        timeout(time: 10, unit: 'MINUTES')
+        skipStagesAfterUnstable()
     }
-
     stages {
-        stage('SCM') {
-            steps {
+         stage('Clone repository') { 
+            steps { 
+                script{
                 checkout scm
+                }
             }
         }
-        stage('dockerize') {
+
+        stage('Build') { 
+            steps { 
+                script{
+                 app = docker.build("DOCKER-ENV-AMI")
+                }
+            }
+        }
+        stage('Test'){
             steps {
-                script {
-                    docker.withRegistry(${env.REGISTRY},${env.REGISTRY_CREDENTIAL}) {
-                        stage('build') {
-                            image = docker.build("DOCKER-ENV-AMI:${env.BUILD_ID}")
-                        }
-                        stage('deploy') {
-                            image.push()
-                            image.push('latest')
-                            if (env.TAG_NAME) {
-                                image.push("${env.TAG_NAME}")
-                            }
-                        }
+                 echo 'Empty'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script{
+                    docker.withRegistry(${env.REGISTRY}, ${env.REGISTRY_CREDENTIAL}) {
+                    app.push("${env.BUILD_NUMBER}")
+                    app.push("latest")
                     }
                 }
             }
         }
-    }
-
-    post {
-      always {
-        cleanWs(disableDeferredWipeout: true)
-      }
     }
 }
