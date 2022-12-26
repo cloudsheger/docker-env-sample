@@ -39,7 +39,9 @@ pipeline {
             steps {
                 script{
                     docker.withRegistry('https://registry.hub.docker.com', 'DockerID') {
-                    app.push("latest")
+                     def customImage = docker.build("docker-env-ami:${env.BUILD_ID}")
+                     /* Push the container to the custom Registry */
+                    customImage.push()
                     }
                 }
             }
