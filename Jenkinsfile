@@ -26,7 +26,7 @@ pipeline {
         stage('Build') { 
             steps { 
                 script{
-                 def app = docker.build("docker-env-ami:${env.BUILD_ID}")
+                 app = docker.build("docker-env-ami:${env.BUILD_ID}")
                 }
             }
         }
