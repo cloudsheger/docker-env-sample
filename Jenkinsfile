@@ -26,7 +26,7 @@ pipeline {
         stage('Build') { 
             steps { 
                 script{
-                 app = docker.build("docker-env-ami")
+                 def app = docker.build("docker-env-ami:${env.BUILD_ID}")
                 }
             }
         }
@@ -38,8 +38,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'DockerID') --password-stdin {
-                    app.push("${env.BUILD_NUMBER}")
+                    docker.withRegistry('https://registry.hub.docker.com', 'DockerID') {
                     app.push("latest")
                     }
                 }
