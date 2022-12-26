@@ -38,7 +38,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'DockerID') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'DockerID') --password-stdin {
                     app.push("${env.BUILD_NUMBER}")
                     app.push("latest")
                     }
