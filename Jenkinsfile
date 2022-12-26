@@ -14,9 +14,6 @@ pipeline {
     //registryCredential = '<dockerhub-credential-name>'
     }
 
-    options {
-        skipStagesAfterUnstable()
-    }
     stages {
          stage('Clone repository') { 
             steps { 
