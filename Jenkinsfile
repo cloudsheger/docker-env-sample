@@ -25,7 +25,7 @@ pipeline {
         stage('Build') { 
             steps { 
                 script{
-                 app = docker.build("DOCKER-ENV-AMI")
+                 app = docker.build("docker-env-ami")
                 }
             }
         }
