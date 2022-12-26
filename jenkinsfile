@@ -1,13 +1,17 @@
 pipeline {
     agent any
+    options{
+        buildDiscarder(logRotator(numToKeepStr: '5', daysToKeepStr: '5'))
+        timestamps()
+    }
 
     environment {
     //registry = "YourDockerhubAccount/YourRepository"
-    REGISTRY = "https://hub.docker.com/repositories/cloudsheger/"
-    //registryCredential = 'dockerhub_id'
-    //registryCredential = 'DockerID'
-    REGISTRY_CREDENTIAL = 'DockerID'
+    registry = "cloudsheger/jenkins"
+    registryCredential = 'DockerID'
     dockerImage = ''
+    //registry = "<dockerhub-username>/<repo-name>"
+    //registryCredential = '<dockerhub-credential-name>'
     }
 
     options {
@@ -37,7 +41,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script{
-                    docker.withRegistry(${env.REGISTRY}, ${env.REGISTRY_CREDENTIAL}) {
+                    docker.withRegistry('https://registry.hub.docker.com', 'DockerID') {
                     app.push("${env.BUILD_NUMBER}")
                     app.push("latest")
                     }
